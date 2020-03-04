@@ -54,4 +54,3 @@ public class RegistrationServlet extends HttpServlet {
 
 }
 
-// ApplicationContext - хранит в себе знания о бинах

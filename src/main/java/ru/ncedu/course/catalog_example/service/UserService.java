@@ -25,9 +25,6 @@ public class UserService {
     @Inject
     private JourneyBean journeyBean;
 
-    @Inject
-    private LikeBean likeBean;
-
     private String digest(String password, String salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -48,7 +45,6 @@ public class UserService {
         if(digest(password, user.getSalt()).equals(user.getPassword())) {
             authorizationBean.setUser(user);
             journeyBean.setUser(user);
-            likeBean.setUser(user);
             return new UserDTO(user);
         } else {
             throw new InvalidLoginPasswordException();

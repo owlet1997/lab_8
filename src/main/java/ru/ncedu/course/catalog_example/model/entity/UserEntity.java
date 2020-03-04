@@ -2,6 +2,8 @@ package ru.ncedu.course.catalog_example.model.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", schema = "catalog_example")
@@ -19,6 +21,14 @@ public class UserEntity implements Serializable {
 
     @Column(nullable = false)
     private String salt;
+
+    @ManyToMany
+    @JoinTable(name = "likes",
+               schema = "catalog_example",
+               joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+               inverseJoinColumns = @JoinColumn(name = "offering_id", referencedColumnName = "id")
+    )
+    private Set<OfferingEntity> offerings = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -52,4 +62,11 @@ public class UserEntity implements Serializable {
         this.salt = salt;
     }
 
+    public Set<OfferingEntity> getOfferings() {
+        return offerings;
+    }
+
+    public void setOfferings(Set<OfferingEntity> offerings) {
+        this.offerings = offerings;
+    }
 }

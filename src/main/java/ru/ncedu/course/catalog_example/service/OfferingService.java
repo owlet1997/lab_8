@@ -5,12 +5,16 @@ import ru.ncedu.course.catalog_example.exception.OfferingNotFoundException;
 import ru.ncedu.course.catalog_example.exception.UnauthorizedException;
 import ru.ncedu.course.catalog_example.model.dao.CategoryDAO;
 import ru.ncedu.course.catalog_example.model.dao.OfferingDAO;
+import ru.ncedu.course.catalog_example.model.dao.UserDAO;
 import ru.ncedu.course.catalog_example.model.dto.OfferingDTO;
 import ru.ncedu.course.catalog_example.model.entity.OfferingEntity;
+import ru.ncedu.course.catalog_example.model.entity.UserEntity;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Stateless
@@ -23,10 +27,10 @@ public class OfferingService {
     private CategoryDAO categoryDAO;
 
     @Inject
-    private AuthorizationBean authorizationBean;
+    private UserDAO userDAO;
 
     @Inject
-    private LikeService likeService;
+    private AuthorizationBean authorizationBean;
 
     public OfferingDTO create(String name, Long price, Long category) throws CategoryNotFoundException, UnauthorizedException {
         OfferingEntity entity = new OfferingEntity();
@@ -47,12 +51,25 @@ public class OfferingService {
 
     public List<OfferingDTO> findAll() {
         List<OfferingDTO> list = offeringDAO.findAll().stream().map(OfferingDTO::new).collect(Collectors.toList());
-        if (likeService.getLikeList()!=null)
-        for (OfferingDTO o: list){
-            if (likeService.getLikeList().contains(o.getId()))
-                o.setLike(true);
+        if (authorizationBean.isAuthorized()){
+
+            Set<OfferingEntity> set = authorizationBean.getUser().get().getOfferings();
+            List<Long> likeList = new ArrayList<>();
+            set.forEach(offeringEntity -> likeList.add(offeringEntity.getId()));
+
+            if (!likeList.isEmpty())
+                for (OfferingDTO o: list){
+                    if (likeList.contains(o.getId()))
+                        o.setLike(true);
+                }
         }
         return list;
+    }
+
+    public void likeThis(long offerId){
+        UserEntity userEntity = authorizationBean.getUser().get();
+        userEntity.getOfferings().add(offeringDAO.findById(offerId).get());
+        userDAO.update(userEntity);
     }
 
 }

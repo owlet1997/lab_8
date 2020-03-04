@@ -2,7 +2,9 @@ package ru.ncedu.course.catalog_example.model.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "offerings", schema = "catalog_example")
@@ -25,6 +27,9 @@ public class OfferingEntity implements Serializable {
     @ManyToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
     private UserEntity owner;
+
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "offerings")
+    private Set<UserEntity> users = new HashSet<>();
 
     @OneToMany(mappedBy = "offering")
     private List<CommentEntity> comments;
@@ -77,4 +82,11 @@ public class OfferingEntity implements Serializable {
         this.comments = comments;
     }
 
+    public Set<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<UserEntity> users) {
+        this.users = users;
+    }
 }

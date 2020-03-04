@@ -2,7 +2,6 @@ package ru.ncedu.course.catalog_example.servlet;
 
 import ru.ncedu.course.catalog_example.exception.InvalidLoginPasswordException;
 import ru.ncedu.course.catalog_example.service.JourneyService;
-import ru.ncedu.course.catalog_example.service.LikeService;
 import ru.ncedu.course.catalog_example.service.UserService;
 import ru.ncedu.course.catalog_example.util.PathConstants;
 
@@ -34,9 +33,6 @@ public class LoginServlet extends HttpServlet {
     @Inject
     private JourneyService journeyService;
 
-    @Inject
-    private LikeService likeService;
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         getServletContext().removeAttribute(INVALID_CREDENTIALS);
@@ -55,7 +51,6 @@ public class LoginServlet extends HttpServlet {
             try {
                 userService.login(login, password);
                 journeyService.createJourneyList();
-                likeService.createLikeList();
 
                 getServletContext().removeAttribute(INVALID_CREDENTIALS);
 

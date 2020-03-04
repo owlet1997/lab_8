@@ -1,7 +1,5 @@
 package ru.ncedu.course.catalog_example.servlet;
 
-import ru.ncedu.course.catalog_example.exception.OfferingNotFoundException;
-import ru.ncedu.course.catalog_example.service.LikeService;
 import ru.ncedu.course.catalog_example.service.OfferingService;
 import ru.ncedu.course.catalog_example.util.PathConstants;
 
@@ -17,14 +15,14 @@ import java.io.IOException;
 public class LikeServlet extends HttpServlet {
 
     @Inject
-    private LikeService likeService;
+    private OfferingService offeringService;
 
     private static final String OFFERING_ID_PARAM = "id";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long offeringId = Long.parseLong(req.getParameter(OFFERING_ID_PARAM));
-        likeService.addOffering(offeringId);
+        offeringService.likeThis(offeringId);
         getServletContext().getRequestDispatcher(PathConstants.CATALOG_PATH).forward(req, resp);
 
     }
@@ -32,7 +30,7 @@ public class LikeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long offeringId = Long.parseLong(req.getParameter(OFFERING_ID_PARAM));
-        likeService.addOffering(offeringId);
+        offeringService.likeThis(offeringId);
         getServletContext().getRequestDispatcher(PathConstants.CATALOG_PATH).forward(req, resp);
     }
 }
